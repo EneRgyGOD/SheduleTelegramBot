@@ -34,6 +34,7 @@ namespace SheduleTelegramBot
             this.ListBoxUsers = new System.Windows.Forms.ListBox();
             this.sendTextBox = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
+            this.ListBoxMessages = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // button1
@@ -48,7 +49,7 @@ namespace SheduleTelegramBot
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(129, 12);
+            this.button2.Location = new System.Drawing.Point(12, 64);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(111, 46);
             this.button2.TabIndex = 1;
@@ -58,25 +59,26 @@ namespace SheduleTelegramBot
             // 
             // ListBoxUsers
             // 
-            this.ListBoxUsers.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ListBoxUsers.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ListBoxUsers.FormattingEnabled = true;
-            this.ListBoxUsers.ItemHeight = 20;
-            this.ListBoxUsers.Location = new System.Drawing.Point(246, 12);
+            this.ListBoxUsers.ItemHeight = 16;
+            this.ListBoxUsers.Location = new System.Drawing.Point(129, 12);
             this.ListBoxUsers.Name = "ListBoxUsers";
-            this.ListBoxUsers.Size = new System.Drawing.Size(80, 124);
+            this.ListBoxUsers.Size = new System.Drawing.Size(155, 180);
             this.ListBoxUsers.TabIndex = 2;
             this.ListBoxUsers.SelectedIndexChanged += new System.EventHandler(this.ChangedTargetUser);
             // 
             // sendTextBox
             // 
-            this.sendTextBox.Location = new System.Drawing.Point(14, 64);
+            this.sendTextBox.Location = new System.Drawing.Point(290, 170);
             this.sendTextBox.Name = "sendTextBox";
             this.sendTextBox.Size = new System.Drawing.Size(226, 22);
             this.sendTextBox.TabIndex = 3;
+            this.sendTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sendTextBox_KeyDown);
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(184, 92);
+            this.button3.Location = new System.Drawing.Point(522, 168);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(56, 24);
             this.button3.TabIndex = 4;
@@ -84,11 +86,21 @@ namespace SheduleTelegramBot
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.SendButtonClick);
             // 
+            // ListViewMessages
+            // 
+            this.ListBoxMessages.FormattingEnabled = true;
+            this.ListBoxMessages.ItemHeight = 16;
+            this.ListBoxMessages.Location = new System.Drawing.Point(290, 12);
+            this.ListBoxMessages.Name = "ListViewMessages";
+            this.ListBoxMessages.Size = new System.Drawing.Size(295, 148);
+            this.ListBoxMessages.TabIndex = 5;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(591, 205);
+            this.Controls.Add(this.ListBoxMessages);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.sendTextBox);
             this.Controls.Add(this.ListBoxUsers);
@@ -109,8 +121,7 @@ namespace SheduleTelegramBot
         private System.Windows.Forms.TextBox sendTextBox;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
-
-     
+        private System.Windows.Forms.ListBox ListBoxMessages;
     }
 }
 
