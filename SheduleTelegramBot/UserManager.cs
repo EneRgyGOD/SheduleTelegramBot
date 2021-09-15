@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.IO;
 using Telegram.Bot;
 using System.Windows.Forms;
+using System.Text;
 
 namespace SheduleTelegramBot
 {
@@ -26,7 +27,7 @@ namespace SheduleTelegramBot
             string output = JsonConvert.SerializeObject(users);
             try
             {
-                File.WriteAllText("userList.txt", output);
+                File.WriteAllText("userList.txt", output, Encoding.UTF8);
 
                 return true;
             }
