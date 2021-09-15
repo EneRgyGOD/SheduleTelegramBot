@@ -31,7 +31,7 @@ namespace SheduleTelegramBot
         {
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.UserList = new System.Windows.Forms.ListBox();
+            this.ListBoxUsers = new System.Windows.Forms.ListBox();
             this.sendTextBox = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -56,19 +56,18 @@ namespace SheduleTelegramBot
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.StopButtonClick);
             // 
-            // UserList
+            // ListBoxUsers
             // 
-            this.UserList.FormattingEnabled = true;
-            this.UserList.ItemHeight = 16;
-            this.UserList.Items.AddRange(new object[] {
-            "Misha",
-            "grisha",
-            "galya"});
-            this.UserList.Location = new System.Drawing.Point(255, 14);
-            this.UserList.Name = "UserList";
-            this.UserList.Size = new System.Drawing.Size(56, 116);
-            this.UserList.TabIndex = 2;
-            this.UserList.SelectedIndexChanged += new System.EventHandler(this.ChangedTargetUser);
+            this.ListBoxUsers.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ListBoxUsers.FormattingEnabled = true;
+            this.ListBoxUsers.ItemHeight = 20;
+            this.ListBoxUsers.Items.AddRange(new object[] {
+            "Бодя"});
+            this.ListBoxUsers.Location = new System.Drawing.Point(246, 12);
+            this.ListBoxUsers.Name = "ListBoxUsers";
+            this.ListBoxUsers.Size = new System.Drawing.Size(80, 104);
+            this.ListBoxUsers.TabIndex = 2;
+            this.ListBoxUsers.SelectedIndexChanged += new System.EventHandler(this.ChangedTargetUser);
             // 
             // sendTextBox
             // 
@@ -94,7 +93,7 @@ namespace SheduleTelegramBot
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.sendTextBox);
-            this.Controls.Add(this.UserList);
+            this.Controls.Add(this.ListBoxUsers);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
@@ -108,7 +107,7 @@ namespace SheduleTelegramBot
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ListBox UserList;
+        private System.Windows.Forms.ListBox ListBoxUsers;
         private System.Windows.Forms.TextBox sendTextBox;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
