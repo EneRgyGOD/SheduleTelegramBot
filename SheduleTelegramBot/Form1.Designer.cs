@@ -29,33 +29,33 @@ namespace SheduleTelegramBot
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnStartListening = new System.Windows.Forms.Button();
+            this.btnStopListening = new System.Windows.Forms.Button();
             this.ListBoxUsers = new System.Windows.Forms.ListBox();
             this.sendTextBox = new System.Windows.Forms.TextBox();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnSend = new System.Windows.Forms.Button();
             this.ListBoxMessages = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
-            // button1
+            // btnStartListening
             // 
-            this.button1.Location = new System.Drawing.Point(12, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(111, 46);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Start Listening";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.StartButtonClick);
+            this.btnStartListening.Location = new System.Drawing.Point(12, 12);
+            this.btnStartListening.Name = "btnStartListening";
+            this.btnStartListening.Size = new System.Drawing.Size(111, 46);
+            this.btnStartListening.TabIndex = 0;
+            this.btnStartListening.Text = "Start Listening";
+            this.btnStartListening.UseVisualStyleBackColor = true;
+            this.btnStartListening.Click += new System.EventHandler(this.StartButtonClick);
             // 
-            // button2
+            // btnStopListening
             // 
-            this.button2.Location = new System.Drawing.Point(12, 64);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(111, 46);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Stop Listening";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.StopButtonClick);
+            this.btnStopListening.Location = new System.Drawing.Point(12, 64);
+            this.btnStopListening.Name = "btnStopListening";
+            this.btnStopListening.Size = new System.Drawing.Size(111, 46);
+            this.btnStopListening.TabIndex = 1;
+            this.btnStopListening.Text = "Stop Listening";
+            this.btnStopListening.UseVisualStyleBackColor = true;
+            this.btnStopListening.Click += new System.EventHandler(this.StopButtonClick);
             // 
             // ListBoxUsers
             // 
@@ -72,42 +72,42 @@ namespace SheduleTelegramBot
             // 
             this.sendTextBox.Location = new System.Drawing.Point(290, 170);
             this.sendTextBox.Name = "sendTextBox";
-            this.sendTextBox.Size = new System.Drawing.Size(226, 22);
+            this.sendTextBox.Size = new System.Drawing.Size(458, 22);
             this.sendTextBox.TabIndex = 3;
             this.sendTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sendTextBox_KeyDown);
             // 
-            // button3
+            // btnSend
             // 
-            this.button3.Location = new System.Drawing.Point(522, 168);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(56, 24);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "Send";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.SendButtonClick);
+            this.btnSend.Location = new System.Drawing.Point(754, 170);
+            this.btnSend.Name = "btnSend";
+            this.btnSend.Size = new System.Drawing.Size(56, 24);
+            this.btnSend.TabIndex = 4;
+            this.btnSend.Text = "Send";
+            this.btnSend.UseVisualStyleBackColor = true;
+            this.btnSend.Click += new System.EventHandler(this.SendButtonClick);
             // 
-            // ListViewMessages
+            // ListBoxMessages
             // 
             this.ListBoxMessages.FormattingEnabled = true;
             this.ListBoxMessages.ItemHeight = 16;
             this.ListBoxMessages.Location = new System.Drawing.Point(290, 12);
-            this.ListBoxMessages.Name = "ListViewMessages";
-            this.ListBoxMessages.Size = new System.Drawing.Size(295, 148);
+            this.ListBoxMessages.Name = "ListBoxMessages";
+            this.ListBoxMessages.Size = new System.Drawing.Size(520, 148);
             this.ListBoxMessages.TabIndex = 5;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 205);
+            this.ClientSize = new System.Drawing.Size(822, 205);
             this.Controls.Add(this.ListBoxMessages);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.btnSend);
             this.Controls.Add(this.sendTextBox);
             this.Controls.Add(this.ListBoxUsers);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnStopListening);
+            this.Controls.Add(this.btnStartListening);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "TelegramBot";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -116,11 +116,11 @@ namespace SheduleTelegramBot
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnStartListening;
         private System.Windows.Forms.ListBox ListBoxUsers;
         private System.Windows.Forms.TextBox sendTextBox;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnSend;
+        private System.Windows.Forms.Button btnStopListening;
         private System.Windows.Forms.ListBox ListBoxMessages;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -32,14 +31,19 @@ namespace SheduleTelegramBot
         private TelegramBotClient client = new TelegramBotClient("1990617206:AAFDXPAOm8RvRMObS8aE4BbGwdzRB9v35Ug");
 
         private long CurrentUser = 0;
+        private bool isActive = false;
 
         private void StartButtonClick(object sender, EventArgs e)
         {
-            client.StartReceiving();
-            Console.WriteLine("not gut");
-            client.OnMessage += OnMessageHandler;
-            Console.WriteLine("gut");
-            Update();
+            if (!isActive)
+            {
+                client.StartReceiving();
+                Console.WriteLine("not gut");
+                client.OnMessage += OnMessageHandler;
+                Console.WriteLine("gut");
+                Update();
+                isActive = true;
+            }
         }
 
         private void OnMessageHandler(object sender, MessageEventArgs e)
@@ -49,8 +53,6 @@ namespace SheduleTelegramBot
                 client.SendTextMessageAsync(e.Message.Chat.Id, "moment");
             }
 
-
-
             if (users.Count == 0)
             {
                 users.Add(userManager.Add(e.Message.Chat.Username, e.Message.Chat.Id));
@@ -58,10 +60,10 @@ namespace SheduleTelegramBot
             }
             else
             {
-                for (int i = 0; i < users.Count; i++)
+                int stableCount = users.Count;
+                for (int i = 0; i < stableCount; i++)
                 {
-
-                    if (users[i].Id != e.Message.Chat.Id)
+                    if (users.Any(x => x.Id != e.Message.Chat.Id))
                     {
                         users.Add(userManager.Add(e.Message.Chat.Username, e.Message.Chat.Id));
                         userManager.Save(users);
@@ -70,12 +72,13 @@ namespace SheduleTelegramBot
                 }
             }
 
-            messages.Add(new Message(e.Message.Chat.Id, e.Message.Chat.Username, e.Message.Text, e.Message.MessageId));
+            messages.Add(new Message(e.Message.Chat.Id, e.Message.Chat.Username, e.Message.Text, e.Message.MessageId, e.Message.Date));
         }
 
         private void StopButtonClick(object sender, EventArgs e)
         {
             client.StopReceiving();
+            isActive = false;
         }
 
         private void ChangedTargetUser(object sender, System.EventArgs et)
@@ -90,16 +93,14 @@ namespace SheduleTelegramBot
                 }
             }
 
-            ListBoxMessages.Items.Clear();
-
-            UpdateMsg();
+            UpdateMsgBox();
         }
 
         private void SendButtonClick(object sender, System.EventArgs e)
         {
             client.SendTextMessageAsync(CurrentUser, sendTextBox.Text);
 
-            messages.Add(new Message(CurrentUser, "BOT", sendTextBox.Text, messages.Count));
+            messages.Add(new Message(CurrentUser, "BOT", sendTextBox.Text, messages.Count, DateTime.Now));
             sendTextBox.Clear();
             UpdateMsg();
         }
@@ -126,23 +127,37 @@ namespace SheduleTelegramBot
 
                 UpdateMsg();
 
-                await Task.Delay(1000);
+                await Task.Delay(10);
             }
         }
 
         private void UpdateMsg()
+        {
+            foreach (Message message in messages)
+            {
+                if (message.Id == CurrentUser)
+                {
+                    string final = message.time.Hour + ":" + message.time.Minute + ":" + message.time.Second + ":" + message.time.Millisecond + "\t" + message.Username + ": " + message.Text;
+
+                    if (!ListBoxMessages.Items.Contains(final))
+                    {
+                        ListBoxMessages.Items.Add(final);
+                    }
+                }
+            }
+
+        }
+
+        private void UpdateMsgBox()
         {
             ListBoxMessages.Items.Clear();
             foreach (Message message in messages)
             {
                 if (message.Id == CurrentUser)
                 {
-                    ListBoxMessages.Items.Add(message.Username + ": " + message.Text);
+                    ListBoxMessages.Items.Add(message.time.Hour + ":" + message.time.Minute + ":" + message.time.Second + ":" + message.time.Millisecond + "\t" + message.Username + ": " + message.Text);
                 }
             }
         }
     }
 }
-
-
-

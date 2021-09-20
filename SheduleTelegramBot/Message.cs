@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace SheduleTelegramBot
 {
@@ -8,13 +8,15 @@ namespace SheduleTelegramBot
         public string Username;
         public string Text;
         public long MsgId;
+        public DateTime time;
 
-        public Message(long Id, string User, string Text, long MsgId)
+        public Message(long Id, string User, string Text, long MsgId, DateTime time)
         {
             this.Id = Id;  
             this.Username = User;
             this.Text = Text;   
             this.MsgId = MsgId;
+            this.time = time;
         }
     }
 }
