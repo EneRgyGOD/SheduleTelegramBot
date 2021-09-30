@@ -1,5 +1,4 @@
-﻿
-namespace SheduleTelegramBot
+﻿namespace SheduleTelegramBot
 {
     class User
     {
@@ -12,5 +11,4 @@ namespace SheduleTelegramBot
             this.Id = id;
         }
     }
-
 }

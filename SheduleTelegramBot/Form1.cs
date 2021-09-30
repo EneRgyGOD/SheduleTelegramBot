@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Telegram.Bot;
 using Telegram.Bot.Args;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 
 namespace SheduleTelegramBot
 {
     public partial class Form1 : Form
     {
-        UserManager userManager = new UserManager();
+        Manager mng = new Manager();
         List<User> users = new List<User>();
         List<Message> messages = new List<Message>();
 
         public Form1()
         {
             InitializeComponent();
-            users = userManager.Load();
+            users = mng.LoadUsers();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -55,54 +57,83 @@ namespace SheduleTelegramBot
 
             if (users.Count == 0)
             {
-                users.Add(userManager.Add(e.Message.Chat.Username, e.Message.Chat.Id));
-                userManager.Save(users);
+                users.Add(mng.Add(e.Message.Chat.Username, e.Message.Chat.Id));
+
             }
             else
             {
-                int stableCount = users.Count;
-                for (int i = 0; i < stableCount; i++)
+                if (!mng.Compare(users, e.Message.Chat.Id))
                 {
-                    if (users.Any(x => x.Id != e.Message.Chat.Id))
-                    {
-                        users.Add(userManager.Add(e.Message.Chat.Username, e.Message.Chat.Id));
-                        userManager.Save(users);
-                    }
-
+                    users.Add(mng.Add(e.Message.Chat.Username, e.Message.Chat.Id));
                 }
             }
 
-            messages.Add(new Message(e.Message.Chat.Id, e.Message.Chat.Username, e.Message.Text, e.Message.MessageId, e.Message.Date));
+            if (e.Message.Type == MessageType.Text)
+            {
+                messages.Add(new Message(e.Message.Chat.Id, e.Message.Chat.Username, e.Message.Text, e.Message.MessageId, e.Message.Date));
+            }
+            else if (e.Message.Type == MessageType.Sticker)
+            {
+                messages.Add(new Message(e.Message.Chat.Id, e.Message.Chat.Username, e.Message.Sticker.Emoji, e.Message.MessageId, e.Message.Date));
+            }
         }
 
         private void StopButtonClick(object sender, EventArgs e)
         {
-            client.StopReceiving();
-            isActive = false;
-        }
-
-        private void ChangedTargetUser(object sender, System.EventArgs et)
-        {
-            string targetedName = ListBoxUsers.SelectedItem.ToString();
-
-            for (int i = 0; i < users.Count; i++)
+            if (isActive)
             {
-                if (targetedName == users[i].Name)
-                {
-                    CurrentUser = users[i].Id;
-                }
+                client.StopReceiving();
+                isActive = false;
             }
+            else MessageBox.Show("Bot doesn't started yet");
 
-            UpdateMsgBox();
         }
 
-        private void SendButtonClick(object sender, System.EventArgs e)
+        private void ChangedTargetUser(object sender, EventArgs et)
         {
-            client.SendTextMessageAsync(CurrentUser, sendTextBox.Text);
+            if (ListBoxUsers.SelectedItem != null)
+            {
+                string targetedName = ListBoxUsers.SelectedItem.ToString();
 
-            messages.Add(new Message(CurrentUser, "BOT", sendTextBox.Text, messages.Count, DateTime.Now));
-            sendTextBox.Clear();
-            UpdateMsg();
+                for (int i = 0; i < users.Count; i++)
+                {
+                    if (targetedName == users[i].Name)
+                    {
+                        CurrentUser = users[i].Id;
+                    }
+                }
+
+                UpdateMsgBox();
+            }
+        }
+
+        string filePath = null;
+
+        private async void SendButtonClick(object sender, EventArgs e)
+        {
+            if (filePath == null)
+            {
+                client.SendTextMessageAsync(CurrentUser, sendTextBox.Text);
+
+                messages.Add(new Message(CurrentUser, "BOT", sendTextBox.Text, messages.Count, DateTime.Now));
+                sendTextBox.Clear();
+                UpdateMsg();
+            }
+            else
+            {
+                lblFilePath.Text = "Sending FIle...";
+                using (FileStream stream = File.OpenRead(filePath))
+                {                  
+                    InputOnlineFile inputOnlineFile = new InputOnlineFile(stream, Path.GetFileName(filePath));
+                    await client.SendDocumentAsync(CurrentUser, inputOnlineFile);
+                }
+
+                lblFilePath.Text = "SUCCES!";
+
+                messages.Add(new Message(CurrentUser, "BOT", Path.GetFileName(filePath), messages.Count, DateTime.Now));
+                sendTextBox.Clear();
+                UpdateMsg();
+            }
         }
 
         private void sendTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -137,7 +168,7 @@ namespace SheduleTelegramBot
             {
                 if (message.Id == CurrentUser)
                 {
-                    string final = message.time.Hour + ":" + message.time.Minute + ":" + message.time.Second + ":" + message.time.Millisecond + "\t" + message.Username + ": " + message.Text;
+                    string final = message.time.Hour + ":" + message.time.Minute + ":" + message.time.Second + "\t" + message.Username + ": " + message.Text;
 
                     if (!ListBoxMessages.Items.Contains(final))
                     {
@@ -145,7 +176,6 @@ namespace SheduleTelegramBot
                     }
                 }
             }
-
         }
 
         private void UpdateMsgBox()
@@ -155,8 +185,24 @@ namespace SheduleTelegramBot
             {
                 if (message.Id == CurrentUser)
                 {
-                    ListBoxMessages.Items.Add(message.time.Hour + ":" + message.time.Minute + ":" + message.time.Second + ":" + message.time.Millisecond + "\t" + message.Username + ": " + message.Text);
+                    ListBoxMessages.Items.Add(message.time.Hour + ":" + message.time.Minute + ":" + message.time.Second + "\t" + message.Username + ": " + message.Text);
                 }
+            }
+        }
+
+        private void Form1_Close(object sender, FormClosingEventArgs e)
+        {
+            mng.SaveUsers(users);
+            mng.SaveMessages(messages);
+
+        }
+
+        private void ChooseFileButtonClick(object sender, EventArgs e)
+        {
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                filePath = openFileDialog.FileName;
+                lblFilePath.Text = Path.GetFileName(filePath);
             }
         }
     }
