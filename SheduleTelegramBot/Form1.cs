@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Telegram.Bot;
@@ -30,7 +33,8 @@ namespace SheduleTelegramBot
             }
         }
 
-        private TelegramBotClient client = new TelegramBotClient("1990617206:AAFDXPAOm8RvRMObS8aE4BbGwdzRB9v35Ug");
+        const string token = "1990617206:AAFDXPAOm8RvRMObS8aE4BbGwdzRB9v35Ug";
+        private TelegramBotClient client = new TelegramBotClient(token);
 
         private long CurrentUser = 0;
         private bool isActive = false;
@@ -40,9 +44,9 @@ namespace SheduleTelegramBot
             if (!isActive)
             {
                 client.StartReceiving();
-                Console.WriteLine("not gut");
+
                 client.OnMessage += OnMessageHandler;
-                Console.WriteLine("gut");
+
                 Update();
                 isActive = true;
             }
@@ -68,13 +72,27 @@ namespace SheduleTelegramBot
                 }
             }
 
-            if (e.Message.Type == MessageType.Text)
+            WebClient webClient = new WebClient();
+
+            //message reciever and processor
             {
-                messages.Add(new Message(e.Message.Chat.Id, e.Message.Chat.Username, e.Message.Text, e.Message.MessageId, e.Message.Date));
-            }
-            else if (e.Message.Type == MessageType.Sticker)
-            {
-                messages.Add(new Message(e.Message.Chat.Id, e.Message.Chat.Username, e.Message.Sticker.Emoji, e.Message.MessageId, e.Message.Date));
+                if (e.Message.Type == MessageType.Text)
+                {
+                    AddMsg(new MessageInfo(e.Message.Chat.Username, e.Message.Text, e.Message.MessageId, e.Message.Date), e.Message.Chat.Id);
+                }
+                else if (e.Message.Type == MessageType.Sticker)
+                {
+                    AddMsg(new MessageInfo(e.Message.Chat.Username, e.Message.Sticker.Emoji, e.Message.MessageId, e.Message.Date), e.Message.Chat.Id);
+                }
+                else if (e.Message.Type == MessageType.Photo)
+                {
+                    string response = webClient.DownloadString("https:" + $"//api.telegram.org/bot{token}/getFile?file_id=" + e.Message.Photo[e.Message.Photo.Count() - 1].FileId);
+
+                    ApiResponse responseDeserialized = JsonConvert.DeserializeObject<ApiResponse>(response);
+                    string[] text = responseDeserialized.result.file_path.Split('/');
+                    AddMsg(new MessageInfo(e.Message.Chat.Username, text[1], e.Message.MessageId, e.Message.Date, "https:" + $"//api.telegram.org/file/bot{token}/" + responseDeserialized.result.file_path), e.Message.Chat.Id);
+
+                }
             }
         }
 
@@ -103,7 +121,7 @@ namespace SheduleTelegramBot
                     }
                 }
 
-                UpdateMsgBox();
+                UpdateMsg(true);
             }
         }
 
@@ -115,24 +133,25 @@ namespace SheduleTelegramBot
             {
                 client.SendTextMessageAsync(CurrentUser, sendTextBox.Text);
 
-                messages.Add(new Message(CurrentUser, "BOT", sendTextBox.Text, messages.Count, DateTime.Now));
+                AddMsg(new MessageInfo("BOT", sendTextBox.Text, messages.Count, DateTime.Now), CurrentUser);
                 sendTextBox.Clear();
-                UpdateMsg();
+                UpdateMsg(false);
             }
             else
             {
                 lblFilePath.Text = "Sending FIle...";
+
                 using (FileStream stream = File.OpenRead(filePath))
-                {                  
+                {
                     InputOnlineFile inputOnlineFile = new InputOnlineFile(stream, Path.GetFileName(filePath));
                     await client.SendDocumentAsync(CurrentUser, inputOnlineFile);
                 }
 
                 lblFilePath.Text = "SUCCES!";
 
-                messages.Add(new Message(CurrentUser, "BOT", Path.GetFileName(filePath), messages.Count, DateTime.Now));
+                AddMsg(new MessageInfo("BOT", Path.GetFileName(filePath), messages.Count, DateTime.Now), CurrentUser);
                 sendTextBox.Clear();
-                UpdateMsg();
+                UpdateMsg(false);
             }
         }
 
@@ -156,36 +175,64 @@ namespace SheduleTelegramBot
                     }
                 }
 
-                UpdateMsg();
+                UpdateMsg(false);
 
                 await Task.Delay(10);
             }
         }
 
-        private void UpdateMsg()
+        private void UpdateMsg(bool state)
         {
-            foreach (Message message in messages)
+            if (state == false)
             {
-                if (message.Id == CurrentUser)
+                for (int i = 0; i < messages.Count; i++)
                 {
-                    string final = message.time.Hour + ":" + message.time.Minute + ":" + message.time.Second + "\t" + message.Username + ": " + message.Text;
-
-                    if (!ListBoxMessages.Items.Contains(final))
+                    if (messages[i].Id == CurrentUser)
                     {
-                        ListBoxMessages.Items.Add(final);
+                        if (messages[i].messages.Count > ListBoxMessages.Items.Count)
+                        {
+                            ListBoxMessages.Items.Add(messages[i].messages[messages[i].messages.Count - 1].Username + ": " + messages[i].messages[messages[i].messages.Count - 1].Text);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ListBoxMessages.Items.Clear();
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    if (messages[i].Id == CurrentUser)
+                    {
+                        foreach (MessageInfo msg in messages[i].messages)
+                        {
+                            ListBoxMessages.Items.Add(msg.Username + ": " + msg.Text);
+                        }
                     }
                 }
             }
         }
 
-        private void UpdateMsgBox()
+        private void AddMsg(MessageInfo msginf, long CU)
         {
-            ListBoxMessages.Items.Clear();
-            foreach (Message message in messages)
+            if (messages.Count == 0)
             {
-                if (message.Id == CurrentUser)
+                messages.Add(new Message(CU, msginf));
+            }
+            else
+            {
+                bool containing = false;
+                for (int i = 0; i < messages.Count; i++)
                 {
-                    ListBoxMessages.Items.Add(message.time.Hour + ":" + message.time.Minute + ":" + message.time.Second + "\t" + message.Username + ": " + message.Text);
+                    if (messages.Count != 0 && messages[i].Id == CU)
+                    {
+                        messages[i].messages.Add(msginf);
+                        containing = true;
+                        break;
+                    }
+                }
+                if (!containing)
+                {
+                    messages.Add(new Message(CU, msginf));
                 }
             }
         }
@@ -194,7 +241,6 @@ namespace SheduleTelegramBot
         {
             mng.SaveUsers(users);
             mng.SaveMessages(messages);
-
         }
 
         private void ChooseFileButtonClick(object sender, EventArgs e)
@@ -204,6 +250,23 @@ namespace SheduleTelegramBot
                 filePath = openFileDialog.FileName;
                 lblFilePath.Text = Path.GetFileName(filePath);
             }
+        }
+
+        private void ListBoxMessages_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (ListBoxMessages.SelectedItem != null)
+            {
+                var msge = messages.Where(msg => msg.Id == CurrentUser).ToList();
+                if (isValidateLink(msge[0].messages[ListBoxMessages.SelectedIndex].URI))
+                {
+                    System.Diagnostics.Process.Start(msge[0].messages[ListBoxMessages.SelectedIndex].URI);
+                }
+            }
+        }
+        private bool isValidateLink(string link)
+        {
+            return Uri.TryCreate(link, UriKind.Absolute, out Uri uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
     }
 }

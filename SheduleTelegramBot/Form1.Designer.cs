@@ -75,19 +75,20 @@ namespace SheduleTelegramBot
             // 
             // sendTextBox
             // 
-            this.sendTextBox.Location = new System.Drawing.Point(218, 131);
+            this.sendTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sendTextBox.Location = new System.Drawing.Point(294, 134);
             this.sendTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.sendTextBox.Name = "sendTextBox";
-            this.sendTextBox.Size = new System.Drawing.Size(344, 20);
+            this.sendTextBox.Size = new System.Drawing.Size(559, 22);
             this.sendTextBox.TabIndex = 3;
             this.sendTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sendTextBox_KeyDown);
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(566, 131);
+            this.btnSend.Location = new System.Drawing.Point(857, 131);
             this.btnSend.Margin = new System.Windows.Forms.Padding(2);
             this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(42, 20);
+            this.btnSend.Size = new System.Drawing.Size(42, 28);
             this.btnSend.TabIndex = 4;
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
@@ -101,12 +102,13 @@ namespace SheduleTelegramBot
             this.ListBoxMessages.Location = new System.Drawing.Point(217, 11);
             this.ListBoxMessages.Margin = new System.Windows.Forms.Padding(2);
             this.ListBoxMessages.Name = "ListBoxMessages";
-            this.ListBoxMessages.Size = new System.Drawing.Size(391, 116);
+            this.ListBoxMessages.Size = new System.Drawing.Size(682, 116);
             this.ListBoxMessages.TabIndex = 5;
+            this.ListBoxMessages.MouseDoubleClick += ListBoxMessages_MouseDoubleClick;
             // 
             // btnChoseFile
             // 
-            this.btnChoseFile.Location = new System.Drawing.Point(217, 156);
+            this.btnChoseFile.Location = new System.Drawing.Point(217, 132);
             this.btnChoseFile.Name = "btnChoseFile";
             this.btnChoseFile.Size = new System.Drawing.Size(72, 27);
             this.btnChoseFile.TabIndex = 6;
@@ -118,7 +120,7 @@ namespace SheduleTelegramBot
             // 
             this.lblFilePath.AutoSize = true;
             this.lblFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFilePath.Location = new System.Drawing.Point(295, 161);
+            this.lblFilePath.Location = new System.Drawing.Point(219, 162);
             this.lblFilePath.Name = "lblFilePath";
             this.lblFilePath.Size = new System.Drawing.Size(44, 16);
             this.lblFilePath.TabIndex = 7;
@@ -132,7 +134,7 @@ namespace SheduleTelegramBot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(616, 228);
+            this.ClientSize = new System.Drawing.Size(910, 191);
             this.Controls.Add(this.lblFilePath);
             this.Controls.Add(this.btnChoseFile);
             this.Controls.Add(this.ListBoxMessages);
@@ -163,4 +165,3 @@ namespace SheduleTelegramBot
         private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }
-
