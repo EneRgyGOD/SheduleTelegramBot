@@ -1,5 +1,5 @@
 ﻿
-namespace SheduleTelegramBot
+namespace Sheduler
 {
     partial class Form1
     {

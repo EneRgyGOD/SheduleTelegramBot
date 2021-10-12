@@ -11,7 +11,7 @@ using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
 
-namespace SheduleTelegramBot
+namespace Sheduler
 {
     public partial class Form1 : Form
     {
@@ -47,22 +47,21 @@ namespace SheduleTelegramBot
 
                 client.OnMessage += OnMessageHandler;
 
-                Update();
+                Sync();
                 isActive = true;
             }
         }
-
+        int step = 0;
         private void OnMessageHandler(object sender, MessageEventArgs e)
         {
-            if (e.Message.Text == "bruh")
+            var action = (e.Message.Text.Split(' ').First()) switch
             {
-                client.SendTextMessageAsync(e.Message.Chat.Id, "moment");
-            }
+                "/inline" => onStart(e)
+            };
 
             if (users.Count == 0)
             {
                 users.Add(mng.Add(e.Message.Chat.Username, e.Message.Chat.Id));
-
             }
             else
             {
@@ -72,7 +71,7 @@ namespace SheduleTelegramBot
                 }
             }
 
-            WebClient webClient = new WebClient();
+            WebClient webClient = new();
 
             //message reciever and processor
             {
@@ -87,6 +86,15 @@ namespace SheduleTelegramBot
                 else if (e.Message.Type == MessageType.Photo)
                 {
                     string response = webClient.DownloadString("https:" + $"//api.telegram.org/bot{token}/getFile?file_id=" + e.Message.Photo[e.Message.Photo.Count() - 1].FileId);
+
+                    ApiResponse responseDeserialized = JsonConvert.DeserializeObject<ApiResponse>(response);
+                    string[] text = responseDeserialized.result.file_path.Split('/');
+                    AddMsg(new MessageInfo(e.Message.Chat.Username, text[1], e.Message.MessageId, e.Message.Date, "https:" + $"//api.telegram.org/file/bot{token}/" + responseDeserialized.result.file_path), e.Message.Chat.Id);
+
+                }
+                else if (e.Message.Type == MessageType.Video)
+                {
+                    string response = webClient.DownloadString("https:" + $"//api.telegram.org/bot{token}/getFile?file_id=" + e.Message.Video.FileId);
 
                     ApiResponse responseDeserialized = JsonConvert.DeserializeObject<ApiResponse>(response);
                     string[] text = responseDeserialized.result.file_path.Split('/');
@@ -125,13 +133,13 @@ namespace SheduleTelegramBot
             }
         }
 
-        string filePath = null;
+        string filePath = "";
 
         private async void SendButtonClick(object sender, EventArgs e)
         {
             if (filePath == null)
             {
-                client.SendTextMessageAsync(CurrentUser, sendTextBox.Text);
+                await client.SendTextMessageAsync(CurrentUser, sendTextBox.Text);
 
                 AddMsg(new MessageInfo("BOT", sendTextBox.Text, messages.Count, DateTime.Now), CurrentUser);
                 sendTextBox.Clear();
@@ -163,7 +171,7 @@ namespace SheduleTelegramBot
             }
         }
 
-        private async void Update()
+        private async void Sync()
         {
             while (true)
             {
@@ -267,6 +275,12 @@ namespace SheduleTelegramBot
         {
             return Uri.TryCreate(link, UriKind.Absolute, out Uri uriResult)
                 && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+        }
+
+        private async bool onStart(MessageEventArgs e)
+        {
+            await
+            return true;
         }
     }
 }

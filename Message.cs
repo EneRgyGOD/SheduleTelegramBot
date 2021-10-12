@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SheduleTelegramBot
+namespace Sheduler
 {
     class Message
     {
@@ -12,7 +12,8 @@ namespace SheduleTelegramBot
         {
             this.Id = id;
             messages.Add(new MessageInfo(User, Text, MsgId, time));
-        }public Message(long id, MessageInfo msginf)
+        }
+        public Message(long id, MessageInfo msginf)
         {
             this.Id = id;
             messages.Add(msginf);
@@ -47,6 +48,6 @@ namespace SheduleTelegramBot
             this.time = time;
             this.URI = "";
         }
-        
+
     }
 }

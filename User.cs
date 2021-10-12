@@ -1,4 +1,4 @@
-﻿namespace SheduleTelegramBot
+﻿namespace Sheduler
 {
     class User
     {

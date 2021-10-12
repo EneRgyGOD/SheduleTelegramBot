@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System;
 
-namespace SheduleTelegramBot
+namespace Sheduler
 {
     class Manager
     {
@@ -18,7 +18,9 @@ namespace SheduleTelegramBot
             if (File.Exists("userList.txt"))
             {
                 string input = File.ReadAllText("userList.txt");
+
                 users = JsonConvert.DeserializeObject<List<User>>(input);
+
             }
 
             return users;
